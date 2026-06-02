@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ankieta Diagnostyczna — Bezpieczeństwo i Rozwój Biznesu Beauty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f2744;--navy2:#1b3d6b;--navy3:#2a5298;
+  --gold:#c9a84c;--gold2:#e8c96a;
+  --bg:#f4f6fb;--white:#ffffff;--border:#dde3ef;
+  --text:#1a202c;--muted:#64748b;--light:#eef2f8;
+  --ok:#2d9c6e;--warn:#e67e22;--danger:#e74c3c;
+  --r:14px;--rs:8px;
+}
+
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── LAYOUT ── */
+.page-wrap{max-width:760px;margin:0 auto;padding:2rem 1.25rem 5rem}
+
+/* ── HEADER ── */
+.site-header{background:var(--navy);border-radius:var(--r);padding:2.5rem 2.5rem 2rem;margin-bottom:2rem;position:relative;overflow:hidden}
+.site-header::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;border-radius:50%;background:rgba(201,168,76,.08)}
+.site-header::after{content:'';position:absolute;bottom:-30px;left:30px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.03)}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(201,168,76,.18);color:var(--gold2);font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:1rem}
+.site-header h1{color:#fff;font-family:'DM Serif Display',serif;font-size:clamp(1.5rem,4vw,2rem);font-weight:400;line-height:1.2;margin-bottom:.6rem;position:relative}
+.site-header p{color:rgba(255,255,255,.58);font-size:.875rem;line-height:1.65;max-width:520px;position:relative}
+.header-meta{display:flex;gap:1.5rem;margin-top:1.25rem;position:relative}
+.header-stat{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:rgba(255,255,255,.5)}
+.header-stat span{color:var(--gold2);font-weight:600}
+
+/* ── PROGRESS ── */
+.progress-wrap{margin-bottom:2rem}
+.progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.progress-label{font-size:.8rem;color:var(--muted);font-weight:500}
+.progress-count{font-size:.8rem;color:var(--navy2);font-weight:700}
+.progress-bar{height:7px;background:var(--border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--navy2) 0%,var(--gold) 100%);border-radius:4px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.steps-dots{display:flex;gap:5px;align-items:center;margin-top:.6rem}
+.dot{height:5px;border-radius:3px;transition:all .3s cubic-bezier(.4,0,.2,1);background:var(--border)}
+.dot.done{background:var(--gold);opacity:.7}
+.dot.active{background:var(--navy2);width:22px!important}
+
+/* ── STEPS ── */
+.step{display:none}
+.step.active{display:block;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STEP HEADER ── */
+.step-header{display:flex;align-items:center;gap:.85rem;margin-bottom:1.5rem}
+.step-num{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0;box-shadow:0 2px 8px rgba(15,39,68,.25)}
+.step-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--navy);font-weight:400}
+.step-sub{font-size:.78rem;color:var(--muted);margin-top:2px}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:1rem;transition:border-color .2s}
+.card:focus-within{border-color:rgba(27,61,107,.3)}
+
+/* ── SECTION TAG ── */
+.section-tag{display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--navy2);border-left:3px solid var(--navy2);padding-left:.55rem;margin-bottom:.85rem}
+.section-tag.warn{color:var(--warn);border-color:var(--warn)}
+
+/* ── FIELD ── */
+.field-label{font-size:.78rem;font-weight:700;color:var(--navy2);margin-bottom:.45rem;display:block;letter-spacing:.04em;text-transform:uppercase}
+.field-hint{font-size:.75rem;color:var(--muted);margin-bottom:.55rem;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:540px){.grid2{grid-template-columns:1fr}}
+
+input[type=text],input[type=email],input[type=tel],textarea,select{
+  width:100%;border:1.5px solid var(--border);border-radius:var(--rs);
+  padding:.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:.9rem;
+  color:var(--text);background:var(--bg);transition:border-color .2s,background .2s;outline:none
+}
+input:focus,textarea:focus,select:focus{border-color:var(--navy2);background:var(--white)}
+textarea{resize:vertical;min-height:96px;line-height:1.6}
+
+/* ── CHECKBOXES ── */
+.check-group{display:flex;flex-direction:column;gap:.45rem}
+.check-item{display:flex;align-items:flex-start;gap:.7rem;padding:.7rem 1rem;border-radius:var(--rs);border:1.5px solid var(--border);cursor:pointer;transition:all .15s;background:var(--white);user-select:none}
+.check-item:hover{border-color:var(--navy2);background:var(--light)}
+.check-item.selected{border-color:var(--navy2);background:rgba(27,61,107,.05)}
+.check-item input{display:none}
+.check-box{width:19px;height:19px;min-width:19px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px}
+.check-item.selected .check-box{background:var(--navy2);border-color:var(--navy2)}
+.check-item.selected .check-box::after{content:'✓';color:#fff;font-size:11px;font-weight:800}
+.check-text{font-size:.875rem;line-height:1.45;color:var(--text)}
+
+/* ── RADIO ── */
+.radio-group{display:flex;flex-direction:column;gap:.45rem}
+.radio-item{display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;border-radius:var(--rs);border:1.5px solid var(--border);cursor:pointer;transition:all .15s;background:var(--white);user-select:none}
+.radio-item:hover{border-color:var(--navy2);background:var(--light)}
+.radio-item.selected{border-color:var(--navy2);background:rgba(27,61,107,.05)}
+.radio-item input{display:none}
+.radio-dot{width:19px;height:19px;min-width:19px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.radio-item.selected .radio-dot{border-color:var(--navy2)}
+.radio-item.selected .radio-dot::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--navy2)}
+.radio-text{font-size:.875rem;color:var(--text)}
+
+/* ── NAV ── */
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.75rem;gap:.75rem}
+.btn{padding:.7rem 1.6rem;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:600;cursor:pointer;transition:all .18s;border:none;white-space:nowrap}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 2px 10px rgba(15,39,68,.25)}
+.btn-primary:hover{background:var(--navy2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(15,39,68,.3)}
+.btn-primary:active{transform:translateY(0)}
+.btn-secondary{background:var(--white);color:var(--navy);border:1.5px solid var(--border)}
+.btn-secondary:hover{border-color:var(--navy2);color:var(--navy2)}
+.btn:disabled{opacity:.38;cursor:not-allowed;transform:none!important}
+
+/* ── SUMMARY ── */
+.summary-section{margin-bottom:1.25rem;padding-bottom:.25rem}
+.summary-section h3{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.summary-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.5rem 0;border-bottom:1px dashed var(--border);gap:1.5rem}
+.summary-row:last-child{border:none}
+.summary-key{font-size:.825rem;color:var(--muted);flex-shrink:0;max-width:45%}
+.summary-val{font-size:.825rem;color:var(--text);font-weight:500;text-align:right}
+.tag-wrap{display:flex;flex-wrap:wrap;gap:.35rem;justify-content:flex-end}
+.tag{background:var(--light);color:var(--navy2);font-size:.72rem;padding:3px 10px;border-radius:12px;font-weight:500}
+
+/* ── SUCCESS ── */
+.success-wrap{text-align:center;padding:2.5rem 1rem}
+.success-icon{width:72px;height:72px;background:rgba(45,156,110,.1);border:2px solid rgba(45,156,110,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2rem}
+.success-wrap h2{font-family:'DM Serif Display',serif;font-size:1.75rem;color:var(--navy);font-weight:400;margin-bottom:.75rem}
+.success-wrap p{color:var(--muted);font-size:.9rem;line-height:1.75;max-width:480px;margin:0 auto 1.5rem}
+.next-steps{background:var(--light);border-radius:var(--r);padding:1.25rem 1.5rem;text-align:left;max-width:480px;margin:0 auto}
+.next-steps h4{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--navy2);margin-bottom:.6rem}
+.next-steps li{font-size:.825rem;color:var(--muted);line-height:1.7;margin-left:1.25rem}
+
+/* ── WARN BOX ── */
+.warn-box{background:rgba(230,126,34,.07);border:1px solid rgba(230,126,34,.25);border-radius:var(--rs);padding:.85rem 1rem;margin-bottom:1rem;font-size:.82rem;color:#7a4a1e;line-height:1.6}
+
+/* ── FOOTER ── */
+.site-footer{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:.78rem;color:var(--muted)}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .page-wrap{padding:1rem .75rem 4rem}
+  .site-header{padding:1.75rem 1.5rem 1.5rem}
+  .header-meta{flex-direction:column;gap:.5rem}
+  .nav .btn{padding:.65rem 1.1rem;font-size:.82rem}
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="site-header">
+    <div class="badge">⚕ Bezpieczeństwo i Rozwój Biznesu Beauty</div>
+    <h1>Ankieta diagnostyczna klienta</h1>
+    <p>Wypełnij formularz przed spotkaniem z konsultantem. Dzięki temu przygotujemy dokumentację sanitarną skrojoną dokładnie pod Twój salon.</p>
+    <div class="header-meta">
+      <div class="header-stat">⏱ Czas wypełnienia: <span>5–8 minut</span></div>
+      <div class="header-stat">📋 Sekcji: <span>8</span></div>
+      <div class="header-stat">🔒 Dane są <span>poufne</span></div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span class="progress-label" id="progressLabel">Krok 1 z 8</span>
+      <span class="progress-count" id="progressCount">12%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:12%"></div></div>
+    <div class="steps-dots" id="stepsDots"></div>
+  </div>
+
+  <!-- ═══ KROK 1 ═══ -->
+  <div class="step active" id="step-1">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div><div class="step-title">Dane organizacyjne</div><div class="step-sub">Podstawowe informacje o Twoim salonie</div></div>
+    </div>
+    <div class="card">
+      <label class="field-label">Pełna nazwa salonu / gabinetu *</label>
+      <input type="text" id="f_nazwa" placeholder="np. Salon Fryzjerski «Złoty Grzebień»" autocomplete="organization">
+    </div>
+    <div class="card">
+      <div class="grid2">
+        <div>
+          <label class="field-label">Imię i nazwisko właściciela *</label>
+          <input type="text" id="f_wlasciciel" placeholder="Jan Kowalski" autocomplete="name">
+        </div>
+        <div>
+          <label class="field-label">Telefon kontaktowy *</label>
+          <input type="tel" id="f_tel" placeholder="+48 600 000 000" autocomplete="tel">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Adres e-mail *</label>
+      <input type="email" id="f_email" placeholder="salon@example.pl" autocomplete="email">
+    </div>
+    <div class="card">
+      <label class="field-label">Adres lokalu *</label>
+      <input type="text" id="f_adres" placeholder="ul. Kwiatowa 5/2, 00-001 Warszawa" autocomplete="street-address">
+    </div>
+    <div class="card">
+      <div class="grid2">
+        <div>
+          <label class="field-label">Liczba pracowników</label>
+          <input type="text" id="f_pracownicy" placeholder="np. 3 osoby">
+        </div>
+        <div>
+          <label class="field-label">Liczba stanowisk / foteli</label>
+          <input type="text" id="f_stanowiska" placeholder="np. 4 stanowiska">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="grid2">
+        <div>
+          <label class="field-label">Powierzchnia lokalu (m²)</label>
+          <input type="text" id="f_pow" placeholder="np. 45 m²">
+        </div>
+        <div>
+          <label class="field-label">NIP (opcjonalnie)</label>
+          <input type="text" id="f_nip" placeholder="000-000-00-00">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ KROK 2 ═══ -->
+  <div class="step" id="step-2">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div><div class="step-title">Rodzaj działalności</div><div class="step-sub">Możesz zaznaczyć kilka profili</div></div>
+    </div>
+    <div class="card">
+      <div class="section-tag">Profil salonu</div>
+      <div class="check-group" id="cg_profil">
+        <label class="check-item"><input type="checkbox" value="Salon fryzjerski"><span class="check-box"></span><span class="check-text">Salon fryzjerski</span></label>
+        <label class="check-item"><input type="checkbox" value="Barber shop"><span class="check-box"></span><span class="check-text">Barber shop</span></label>
+        <label class="check-item"><input type="checkbox" value="Salon kosmetyczny"><span class="check-box"></span><span class="check-text">Salon kosmetyczny</span></label>
+        <label class="check-item"><input type="checkbox" value="Gabinet kosmetologiczny"><span class="check-box"></span><span class="check-text">Gabinet kosmetologiczny</span></label>
+        <label class="check-item"><input type="checkbox" value="Gabinet trychologiczny"><span class="check-box"></span><span class="check-text">Gabinet trychologiczny</span></label>
+        <label class="check-item"><input type="checkbox" value="PMU / Makijaż permanentny"><span class="check-box"></span><span class="check-text">PMU / Makijaż permanentny</span></label>
+        <label class="check-item"><input type="checkbox" value="Stylizacja paznokci"><span class="check-box"></span><span class="check-text">Stylizacja paznokci (manicure / pedicure)</span></label>
+        <label class="check-item"><input type="checkbox" value="SPA / Wellness"><span class="check-box"></span><span class="check-text">SPA / Wellness</span></label>
+        <label class="check-item"><input type="checkbox" value="Lash & Brow"><span class="check-box"></span><span class="check-text">Lash &amp; Brow (rzęsy, brwi)</span></label>
+        <label class="check-item"><input type="checkbox" value="Gabinet masażu"><span class="check-box"></span><span class="check-text">Gabinet masażu</span></label>
+        <label class="check-item"><input type="checkbox" value="Solarium"><span class="check-box"></span><span class="check-text">Solarium</span></label>
+      </div>
+      <div style="margin-top:.85rem">
+        <label class="field-label">Inne (jeśli brak na liście)</label>
+        <input type="text" id="f_inne_profil" placeholder="np. tatuaż, piercing, depilacja laserowa…">
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ KROK 3 ═══ -->
+  <div class="step" id="step-3">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div><div class="step-title">Zakres usług</div><div class="step-sub">Zaznacz wszystkie usługi które wykonujesz</div></div>
+    </div>
+    <div class="card">
+      <div class="section-tag">Fryzjerstwo i barbering</div>
+      <div class="check-group" id="cg_fryzjer">
+        <label class="check-item"><input type="checkbox" value="Strzyżenie damskie"><span class="check-box"></span><span class="check-text">Strzyżenie damskie</span></label>
+        <label class="check-item"><input type="checkbox" value="Strzyżenie męskie / barbering"><span class="check-box"></span><span class="check-text">Strzyżenie męskie / usługi barberskie</span></label>
+        <label class="check-item"><input type="checkbox" value="Koloryzacja włosów"><span class="check-box"></span><span class="check-text">Koloryzacja włosów (farby, tlen, rozjaśnianie)</span></label>
+        <label class="check-item"><input type="checkbox" value="Zabiegi chemiczne"><span class="check-box"></span><span class="check-text">Zabiegi chemiczne (trwała, prostowanie, keratyna)</span></label>
+        <label class="check-item"><input type="checkbox" value="Pielęgnacja włosów"><span class="check-box"></span><span class="check-text">Zabiegi pielęgnacyjne (maski, ampułki, olaplex)</span></label>
+        <label class="check-item"><input type="checkbox" value="Golenie brzytwą"><span class="check-box"></span><span class="check-text">Golenie brzytwą</span></label>
+        <label class="check-item"><input type="checkbox" value="Przedłużanie włosów"><span class="check-box"></span><span class="check-text">Przedłużanie / zagęszczanie włosów</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-tag">Kosmetyka i kosmetologia</div>
+      <div class="check-group" id="cg_kosmet">
+        <label class="check-item"><input type="checkbox" value="Oczyszczanie twarzy"><span class="check-box"></span><span class="check-text">Oczyszczanie twarzy (manualne, ultradźwięki, peeling)</span></label>
+        <label class="check-item"><input type="checkbox" value="Zabiegi na twarz"><span class="check-box"></span><span class="check-text">Zabiegi na twarz (maski, mezoterapia, mikrodermabrazja)</span></label>
+        <label class="check-item"><input type="checkbox" value="Depilacja"><span class="check-box"></span><span class="check-text">Depilacja (wosk, cukrowanie, laser/IPL)</span></label>
+        <label class="check-item"><input type="checkbox" value="Zabiegi na ciało"><span class="check-box"></span><span class="check-text">Zabiegi na ciało (masaż, okłady, modelowanie)</span></label>
+        <label class="check-item"><input type="checkbox" value="Makijaż"><span class="check-box"></span><span class="check-text">Makijaż okolicznościowy</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="warn-box">⚠️ Zabiegi poniżej wymagają szczególnych procedur sanitarnych i dokumentacji.</div>
+      <div class="section-tag warn">Zabiegi naruszające ciągłość tkanek</div>
+      <div class="check-group" id="cg_inwazyjne">
+        <label class="check-item"><input type="checkbox" value="PMU - makijaż permanentny"><span class="check-box"></span><span class="check-text">PMU — makijaż permanentny (brwi, usta, oczy)</span></label>
+        <label class="check-item"><input type="checkbox" value="Mikronakłuwanie"><span class="check-box"></span><span class="check-text">Mikronakłuwanie (dermapen, roller)</span></label>
+        <label class="check-item"><input type="checkbox" value="Piercing"><span class="check-box"></span><span class="check-text">Piercing</span></label>
+        <label class="check-item"><input type="checkbox" value="Mezoterapia igłowa"><span class="check-box"></span><span class="check-text">Mezoterapia igłowa / osocze bogatopłytkowe</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-tag">Paznokcie i trychologia</div>
+      <div class="check-group" id="cg_pazn">
+        <label class="check-item"><input type="checkbox" value="Manicure hybrydowy"><span class="check-box"></span><span class="check-text">Manicure klasyczny / hybrydowy</span></label>
+        <label class="check-item"><input type="checkbox" value="Pedicure"><span class="check-box"></span><span class="check-text">Pedicure klasyczny / hybrydowy</span></label>
+        <label class="check-item"><input type="checkbox" value="Przedłużanie paznokci"><span class="check-box"></span><span class="check-text">Przedłużanie paznokci (żel, akryl, tipsy)</span></label>
+        <label class="check-item"><input type="checkbox" value="Trychologia"><span class="check-box"></span><span class="check-text">Diagnostyka i zabiegi trychologiczne</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ KROK 4 ═══ -->
+  <div class="step" id="step-4">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div><div class="step-title">Higiena i dezynfekcja</div><div class="step-sub">Aktualny stan w Twoim salonie</div></div>
+    </div>
+    <div class="card">
+      <label class="field-label">Czy posiadasz już procedury / dokumenty sanitarne?</label>
+      <div class="radio-group" id="rg_procedury">
+        <label class="radio-item"><input type="radio" name="procedury" value="Tak — mam komplet"><span class="radio-dot"></span><span class="radio-text">Tak — mam komplet dokumentów</span></label>
+        <label class="radio-item"><input type="radio" name="procedury" value="Mam kilka, brakuje całości"><span class="radio-dot"></span><span class="radio-text">Mam kilka procedur, ale brakuje mi całości</span></label>
+        <label class="radio-item"><input type="radio" name="procedury" value="Nie — dopiero zaczynam"><span class="radio-dot"></span><span class="radio-text">Nie — dopiero zaczynam / mam kontrolę sanepidu</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Jakich środków dezynfekcyjnych używasz?</label>
+      <p class="field-hint">Wpisz nazwy preparatów jeśli je znasz — pomoże to dobrać procedury</p>
+      <textarea id="f_dezyn" placeholder="np. Korsolex Basic, Lysoformin 3000, Antifect N Liquid, preparaty na bazie alkoholu…"></textarea>
+    </div>
+    <div class="card">
+      <label class="field-label">Czy posiadasz autoklaw (sterylizator parowy)?</label>
+      <div class="radio-group" id="rg_autoklaw">
+        <label class="radio-item"><input type="radio" name="autoklaw" value="Tak — posiadam i używam"><span class="radio-dot"></span><span class="radio-text">Tak — posiadam i używam regularnie</span></label>
+        <label class="radio-item"><input type="radio" name="autoklaw" value="Tak — nie wiem jak dokumentować"><span class="radio-dot"></span><span class="radio-text">Tak — posiadam, ale nie wiem jak dokumentować</span></label>
+        <label class="radio-item"><input type="radio" name="autoklaw" value="Nie — tylko dezynfekcja chemiczna"><span class="radio-dot"></span><span class="radio-text">Nie — używam tylko dezynfekcji chemicznej</span></label>
+        <label class="radio-item"><input type="radio" name="autoklaw" value="Nie wiem"><span class="radio-dot"></span><span class="radio-text">Nie wiem / do ustalenia</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Jak dezynfekujesz narzędzia wielorazowe?</label>
+      <div class="check-group" id="cg_dezyn_narz">
+        <label class="check-item"><input type="checkbox" value="Moczenie w preparacie"><span class="check-box"></span><span class="check-text">Moczenie w preparacie dezynfekcyjnym</span></label>
+        <label class="check-item"><input type="checkbox" value="Myjka ultradźwiękowa"><span class="check-box"></span><span class="check-text">Myjka ultradźwiękowa</span></label>
+        <label class="check-item"><input type="checkbox" value="Autoklaw"><span class="check-box"></span><span class="check-text">Autoklaw (sterylizacja parą)</span></label>
+        <label class="check-item"><input type="checkbox" value="Suche ciepło"><span class="check-box"></span><span class="check-text">Suche ciepło (sucharka)</span></label>
+        <label class="check-item"><input type="checkbox" value="Brak procedury"><span class="check-box"></span><span class="check-text">Brak ustalonej procedury</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Bielizna dla klientów:</label>
+      <div class="radio-group" id="rg_bielizna">
+        <label class="radio-item"><input type="radio" name="bielizna" value="Tylko jednorazowa"><span class="radio-dot"></span><span class="radio-text">Wyłącznie jednorazowa</span></label>
+        <label class="radio-item"><input type="radio" name="bielizna" value="Mieszana"><span class="radio-dot"></span><span class="radio-text">Jednorazowa + wielorazowa prana w salonie</span></label>
+        <label class="radio-item"><input type="radio" name="bielizna" value="Wielorazowa — pralnia zewnętrzna"><span class="radio-dot"></span><span class="radio-text">Wielorazowa — pranie zlecamy na zewnątrz</span></label>
+        <label class="radio-item"><input type="radio" name="bielizna" value="Wielorazowa — własne pranie"><span class="radio-dot"></span><span class="radio-text">Wielorazowa — pranie we własnym zakresie</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ KROK 5 ═══ -->
+  <div class="step" id="step-5">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div><div class="step-title">Gospodarka odpadami</div><div class="step-sub">Odpady i rejestracja BDO</div></div>
+    </div>
+    <div class="card">
+      <label class="field-label">Jakie odpady powstają w Twoim salonie?</label>
+      <div class="check-group" id="cg_odpady">
+        <label class="check-item"><input type="checkbox" value="Komunalne"><span class="check-box"></span><span class="check-text">Odpady komunalne (śmieci, opakowania)</span></label>
+        <label class="check-item"><input type="checkbox" value="Włosy"><span class="check-box"></span><span class="check-text">Włosy (odpady fryzjerskie)</span></label>
+        <label class="check-item"><input type="checkbox" value="Chemiczne"><span class="check-box"></span><span class="check-text">Odpady chemiczne (farby, utleniacze, preparaty)</span></label>
+        <label class="check-item"><input type="checkbox" value="Medyczne / biologiczne"><span class="check-box"></span><span class="check-text">Odpady medyczne / biologiczne (igły, krew, PMU)</span></label>
+        <label class="check-item"><input type="checkbox" value="Opakowania chemiczne"><span class="check-box"></span><span class="check-text">Opakowania po środkach chemicznych</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Umowa na odbiór odpadów medycznych / niebezpiecznych:</label>
+      <div class="radio-group" id="rg_umowa">
+        <label class="radio-item"><input type="radio" name="umowa" value="Tak — mam umowę i dokumenty"><span class="radio-dot"></span><span class="radio-text">Tak — mam aktualną umowę i dokumenty</span></label>
+        <label class="radio-item"><input type="radio" name="umowa" value="Nie — nie wiedziałam/em"><span class="radio-dot"></span><span class="radio-text">Nie — nie wiedziałam/-em, że to wymagane</span></label>
+        <label class="radio-item"><input type="radio" name="umowa" value="Nie dotyczy"><span class="radio-dot"></span><span class="radio-text">Nie dotyczy — nie wykonuję zabiegów inwazyjnych</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Rejestracja w systemie BDO:</label>
+      <div class="radio-group" id="rg_bdo">
+        <label class="radio-item"><input type="radio" name="bdo" value="Tak — mam numer BDO"><span class="radio-dot"></span><span class="radio-text">Tak — mam numer BDO</span></label>
+        <label class="radio-item"><input type="radio" name="bdo" value="Nie — nie słyszałam/em o BDO"><span class="radio-dot"></span><span class="radio-text">Nie — nie słyszałam/-em o BDO</span></label>
+        <label class="radio-item"><input type="radio" name="bdo" value="Nie wiem"><span class="radio-dot"></span><span class="radio-text">Nie wiem / sprawdzę</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ KROK 6 ═══ -->
+  <div class="step" id="step-6">
+    <div class="step-header">
+      <div class="step-num">6</div>
+      <div><div class="step-title">Organizacja lokalu</div><div class="step-sub">Infrastruktura sanitarna</div></div>
+    </div>
+    <div class="card">
+      <label class="field-label">Dostęp do umywalki na stanowisku pracy:</label>
+      <div class="radio-group" id="rg_umywalka">
+        <label class="radio-item"><input type="radio" name="umywalka" value="Przy każdym stanowisku"><span class="radio-dot"></span><span class="radio-text">Umywalka bezpośrednio przy każdym stanowisku</span></label>
+        <label class="radio-item"><input type="radio" name="umywalka" value="Wspólna umywalka"><span class="radio-dot"></span><span class="radio-text">Wspólna umywalka dostępna z każdego stanowiska</span></label>
+        <label class="radio-item"><input type="radio" name="umywalka" value="Brak przy stanowisku"><span class="radio-dot"></span><span class="radio-text">Brak umywalki przy stanowisku roboczym</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Sanitariaty:</label>
+      <div class="radio-group" id="rg_toaleta">
+        <label class="radio-item"><input type="radio" name="toaleta" value="Oddzielne toalety"><span class="radio-dot"></span><span class="radio-text">Oddzielna toaleta dla pracowników i klientów</span></label>
+        <label class="radio-item"><input type="radio" name="toaleta" value="Wspólna toaleta"><span class="radio-dot"></span><span class="radio-text">Wspólna toaleta dla pracowników i klientów</span></label>
+        <label class="radio-item"><input type="radio" name="toaleta" value="Toaleta w budynku"><span class="radio-dot"></span><span class="radio-text">Toaleta w budynku, poza lokalem</span></label>
+        <label class="radio-item"><input type="radio" name="toaleta" value="Brak toalety"><span class="radio-dot"></span><span class="radio-text">Brak toalety w obiekcie</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Wentylacja lokalu:</label>
+      <div class="radio-group" id="rg_wentylacja">
+        <label class="radio-item"><input type="radio" name="wentylacja" value="Mechaniczna"><span class="radio-dot"></span><span class="radio-text">Wentylacja mechaniczna (kratki wentylacyjne / klimatyzacja)</span></label>
+        <label class="radio-item"><input type="radio" name="wentylacja" value="Naturalna"><span class="radio-dot"></span><span class="radio-text">Naturalna (okna)</span></label>
+        <label class="radio-item"><input type="radio" name="wentylacja" value="Brak / nie wiem"><span class="radio-dot"></span><span class="radio-text">Brak / nie wiem</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Strefy czysta / brudna w salonie:</label>
+      <div class="radio-group" id="rg_strefy">
+        <label class="radio-item"><input type="radio" name="strefy" value="Wyraźny podział"><span class="radio-dot"></span><span class="radio-text">Tak — mamy wyraźny, formalny podział</span></label>
+        <label class="radio-item"><input type="radio" name="strefy" value="Częściowy podział"><span class="radio-dot"></span><span class="radio-text">Częściowo — jest jakiś podział, ale niesformalizowany</span></label>
+        <label class="radio-item"><input type="radio" name="strefy" value="Brak podziału"><span class="radio-dot"></span><span class="radio-text">Brak podziału</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Gdzie przechowujesz środki chemiczne?</label>
+      <input type="text" id="f_chemia" placeholder="np. zamknięta szafka wentylowana, oddzielne pomieszczenie gospodarcze…">
+    </div>
+  </div>
+
+  <!-- ═══ KROK 7 ═══ -->
+  <div class="step" id="step-7">
+    <div class="step-header">
+      <div class="step-num">7</div>
+      <div><div class="step-title">Istniejąca dokumentacja</div><div class="step-sub">Co już posiadasz i historia kontroli SANEPID</div></div>
+    </div>
+    <div class="card">
+      <label class="field-label">Które dokumenty sanitarne już posiadasz?</label>
+      <div class="check-group" id="cg_dokumenty">
+        <label class="check-item"><input type="checkbox" value="Plan higieny salonu"><span class="check-box"></span><span class="check-text">Plan higieny salonu</span></label>
+        <label class="check-item"><input type="checkbox" value="Procedury dezynfekcji narzędzi"><span class="check-box"></span><span class="check-text">Procedury dezynfekcji narzędzi</span></label>
+        <label class="check-item"><input type="checkbox" value="Procedura mycia rąk"><span class="check-box"></span><span class="check-text">Procedura mycia i dezynfekcji rąk</span></label>
+        <label class="check-item"><input type="checkbox" value="Procedura po zranieniu"><span class="check-box"></span><span class="check-text">Procedura postępowania po zranieniu</span></label>
+        <label class="check-item"><input type="checkbox" value="Procedura odpadów"><span class="check-box"></span><span class="check-text">Procedura postępowania z odpadami</span></label>
+        <label class="check-item"><input type="checkbox" value="Procedura dezynfekcji powierzchni"><span class="check-box"></span><span class="check-text">Procedura dezynfekcji powierzchni</span></label>
+        <label class="check-item"><input type="checkbox" value="Ewidencja środków chemicznych"><span class="check-box"></span><span class="check-text">Ewidencja środków chemicznych</span></label>
+        <label class="check-item"><input type="checkbox" value="Lista pracowników z procedurami"><span class="check-box"></span><span class="check-text">Lista pracowników zapoznanych z procedurami</span></label>
+        <label class="check-item"><input type="checkbox" value="Checklista kontrolna"><span class="check-box"></span><span class="check-text">Checklista przed kontrolą SANEPID</span></label>
+        <label class="check-item"><input type="checkbox" value="Brak dokumentów"><span class="check-box"></span><span class="check-text">Nie posiadam żadnych dokumentów</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Historia kontroli SANEPID:</label>
+      <div class="radio-group" id="rg_kontrola">
+        <label class="radio-item"><input type="radio" name="kontrola" value="Pierwsza kontrola"><span class="radio-dot"></span><span class="radio-text">Nie było jeszcze kontroli — przygotowuję się profilaktycznie</span></label>
+        <label class="radio-item"><input type="radio" name="kontrola" value="Kontrola bez uwag"><span class="radio-dot"></span><span class="radio-text">Była kontrola — bez większych uwag</span></label>
+        <label class="radio-item"><input type="radio" name="kontrola" value="Kontrola z uwagami do poprawy"><span class="radio-dot"></span><span class="radio-text">Była kontrola — otrzymałam/-em wytyczne do poprawy</span></label>
+        <label class="radio-item"><input type="radio" name="kontrola" value="Zapowiedziana kontrola"><span class="radio-dot"></span><span class="radio-text">Mam zapowiedzianą kontrolę w najbliższym czasie</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label">Uwagi z kontroli (jeśli były)</label>
+      <textarea id="f_kontrola_uwagi" placeholder="Opisz co zakwestionował SANEPID lub jakie wytyczne otrzymałaś/-eś do poprawy…"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ KROK 8 ═══ -->
+  <div class="step" id="step-8">
+    <div class="step-header">
+      <div class="step-num">8</div>
+      <div><div class="step-title">Dodatkowe informacje</div><div class="step-sub">Ostatni krok — pytania i uwagi dla konsultanta</div></div>
+    </div>
+    <div class="card">
+      <label class="field-label">Coś szczególnego w Twoim salonie?</label>
+      <p class="field-hint">np. dwie lokalizacje, planujesz rozszerzyć działalność, masz specjalne wyposażenie, certyfikaty…</p>
+      <textarea id="f_szczegolne" placeholder="Opisz wszystko co może być ważne przy opracowaniu procedur…"></textarea>
+    </div>
+    <div class="card">
+      <label class="field-label">Pytania do konsultanta</label>
+      <p class="field-hint">Co chcesz wyjaśnić lub o co zapytać podczas spotkania?</p>
+      <textarea id="f_pytania" placeholder="Wpisz swoje pytania…"></textarea>
+    </div>
+    <div class="card">
+      <label class="field-label">Skąd dowiedziałaś/-eś się o programie?</label>
+      <div class="radio-group" id="rg_zrodlo">
+        <label class="radio-item"><input type="radio" name="zrodlo" value="Social media"><span class="radio-dot"></span><span class="radio-text">Social media (Facebook, Instagram)</span></label>
+        <label class="radio-item"><input type="radio" name="zrodlo" value="Polecenie"><span class="radio-dot"></span><span class="radio-text">Polecenie od znajomej / kolegi z branży</span></label>
+        <label class="radio-item"><input type="radio" name="zrodlo" value="Google"><span class="radio-dot"></span><span class="radio-text">Szukałam/-em sama/-em (Google)</span></label>
+        <label class="radio-item"><input type="radio" name="zrodlo" value="Reklama online"><span class="radio-dot"></span><span class="radio-text">Reklama online</span></label>
+        <label class="radio-item"><input type="radio" name="zrodlo" value="Inne"><span class="radio-dot"></span><span class="radio-text">Inne</span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PODSUMOWANIE ═══ -->
+  <div class="step" id="step-summary">
+    <div class="step-header">
+      <div class="step-num" style="background:var(--gold);color:#fff">✓</div>
+      <div><div class="step-title">Sprawdź przed wysłaniem</div><div class="step-sub">Upewnij się że wszystko się zgadza</div></div>
+    </div>
+    <div class="card" id="summaryContent"></div>
+  </div>
+
+  <!-- ═══ SUKCES ═══ -->
+  <div class="step" id="step-done">
+    <div class="card">
+      <div class="success-wrap">
+        <div class="success-icon">✓</div>
+        <h2>Ankieta wysłana!</h2>
+        <p>Dziękujemy za wypełnienie formularza. Konsultant skontaktuje się z Tobą w ciągu <strong>24 godzin roboczych</strong>, aby umówić spotkanie i omówić zakres dokumentacji sanitarnej.</p>
+        <div class="next-steps">
+          <h4>Co dalej?</h4>
+          <ul>
+            <li>Przygotujemy wstępną analizę braków dokumentacyjnych</li>
+            <li>Skontaktujemy się w ciągu 24h roboczych</li>
+            <li>Na spotkaniu omówimy plan działania i zakres dokumentacji</li>
+            <li>Zbierz istniejące dokumenty sanitarne jeśli je posiadasz</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAWIGACJA -->
+  <div class="nav" id="navBar">
+    <button class="btn btn-secondary" id="btnPrev" onclick="prevStep()" disabled>← Wstecz</button>
+    <div id="navCenter" style="font-size:.78rem;color:var(--muted)" id="navInfo"></div>
+    <button class="btn btn-primary" id="btnNext" onclick="nextStep()">Dalej →</button>
+  </div>
+
+  <div class="site-footer">
+    <p>Program <strong>Bezpieczeństwo i Rozwój Biznesu Beauty</strong> · Dokumentacja sanitarna SANEPID</p>
+    <p style="margin-top:.35rem">Dane osobowe przetwarzane są zgodnie z RODO wyłącznie w celu przygotowania dokumentacji.</p>
+  </div>
+
+</div>
+
+<script>
+const TOTAL = 8;
+let current = 1;
+const formData = {};
+
+/* ── DOTS ── */
+function buildDots(){
+  const w = document.getElementById('stepsDots');
+  w.innerHTML='';
+  for(let i=1;i<=TOTAL;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===current?' active':i<current?' done':'');
+    d.style.width=(i===current?'22px':'7px');
+    w.appendChild(d);
+  }
+}
+
+/* ── PROGRESS ── */
+function updateProgress(){
+  const pct=Math.round((current/TOTAL)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent='Krok '+current+' z '+TOTAL;
+  document.getElementById('progressCount').textContent=pct+'%';
+}
+
+/* ── COLLECT ── */
+function getChecked(id){
+  return [...document.querySelectorAll('#'+id+' .check-item.selected')]
+    .map(el=>el.querySelector('input').value);
+}
+function getRadio(id){
+  const el=document.querySelector('#'+id+' .radio-item.selected');
+  return el?el.querySelector('input').value:'';
+}
+function getVal(id){return(document.getElementById(id)||{}).value||'';}
+
+/* ── SUMMARY ── */
+function buildSummary(){
+  Object.assign(formData,{
+    nazwa:getVal('f_nazwa'), wlasciciel:getVal('f_wlasciciel'),
+    tel:getVal('f_tel'), email:getVal('f_email'),
+    adres:getVal('f_adres'), pracownicy:getVal('f_pracownicy'),
+    stanowiska:getVal('f_stanowiska'), pow:getVal('f_pow'),
+    profil:getChecked('cg_profil'), inne_profil:getVal('f_inne_profil'),
+    fryzjer:getChecked('cg_fryzjer'), kosmet:getChecked('cg_kosmet'),
+    inwazyjne:getChecked('cg_inwazyjne'), pazn:getChecked('cg_pazn'),
+    procedury:getRadio('rg_procedury'), dezyn:getVal('f_dezyn'),
+    autoklaw:getRadio('rg_autoklaw'), dezyn_narz:getChecked('cg_dezyn_narz'),
+    bielizna:getRadio('rg_bielizna'),
+    odpady:getChecked('cg_odpady'), umowa:getRadio('rg_umowa'), bdo:getRadio('rg_bdo'),
+    umywalka:getRadio('rg_umywalka'), toaleta:getRadio('rg_toaleta'),
+    wentylacja:getRadio('rg_wentylacja'), strefy:getRadio('rg_strefy'),
+    chemia:getVal('f_chemia'),
+    dokumenty:getChecked('cg_dokumenty'), kontrola:getRadio('rg_kontrola'),
+    kontrola_uwagi:getVal('f_kontrola_uwagi'),
+    szczegolne:getVal('f_szczegolne'), pytania:getVal('f_pytania'),
+    zrodlo:getRadio('rg_zrodlo')
+  });
+
+  const c=document.getElementById('summaryContent');
+  c.innerHTML='';
+
+  function row(k,v){
+    if(!v||(Array.isArray(v)&&!v.length))return'';
+    let val=Array.isArray(v)
+      ?'<div class="tag-wrap">'+v.map(x=>'<span class="tag">'+x+'</span>').join('')+'</div>'
+      :'<span>'+v+'</span>';
+    return'<div class="summary-row"><span class="summary-key">'+k+'</span><span class="summary-val">'+val+'</span></div>';
+  }
+  function sec(title,rows){
+    const html=rows.filter(Boolean).join('');
+    if(!html)return;
+    const s=document.createElement('div');
+    s.className='summary-section';
+    s.innerHTML='<h3>'+title+'</h3>'+html;
+    c.appendChild(s);
+  }
+
+  sec('Dane salonu',[
+    row('Salon',formData.nazwa), row('Właściciel',formData.wlasciciel),
+    row('Telefon',formData.tel), row('E-mail',formData.email),
+    row('Adres',formData.adres),
+    row('Pracownicy / stanowiska',
+      (formData.pracownicy&&formData.stanowiska)
+        ?formData.pracownicy+' os. / '+formData.stanowiska+' stanowisk':'')
+  ]);
+  sec('Działalność i usługi',[
+    row('Profil',formData.profil),
+    row('Fryzjerstwo',formData.fryzjer),
+    row('Kosmetologia',formData.kosmet),
+    row('Zabiegi inwazyjne',formData.inwazyjne),
+    row('Paznokcie / trychologia',formData.pazn)
+  ]);
+  sec('Higiena i dezynfekcja',[
+    row('Stan dokumentacji',formData.procedury),
+    row('Preparaty',formData.dezyn),
+    row('Autoklaw',formData.autoklaw),
+    row('Metody dezynfekcji',formData.dezyn_narz),
+    row('Bielizna',formData.bielizna)
+  ]);
+  sec('Odpady i BDO',[
+    row('Rodzaje odpadów',formData.odpady),
+    row('Umowa na odpady',formData.umowa),
+    row('BDO',formData.bdo)
+  ]);
+  sec('Lokal',[
+    row('Umywalka',formData.umywalka),
+    row('Toaleta',formData.toaleta),
+    row('Wentylacja',formData.wentylacja),
+    row('Strefy',formData.strefy),
+    row('Chemia',formData.chemia)
+  ]);
+  sec('Dokumentacja i kontrola',[
+    row('Posiadane dokumenty',formData.dokumenty),
+    row('Historia kontroli',formData.kontrola),
+    row('Uwagi z kontroli',formData.kontrola_uwagi)
+  ]);
+  sec('Dodatkowe',[
+    row('Informacje',formData.szczegolne),
+    row('Pytania',formData.pytania),
+    row('Źródło',formData.zrodlo)
+  ]);
+}
+
+/* ── NAVIGATE ── */
+function showStep(id){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('btnPrev').disabled=(current===1&&id!=='summary');
+}
+
+function nextStep(){
+  if(current<TOTAL){current++;showStep(current);updateProgress();buildDots();}
+  else if(current===TOTAL){
+    buildSummary();
+    showStep('summary');
+    document.getElementById('progressFill').style.width='100%';
+    document.getElementById('progressLabel').textContent='Podsumowanie';
+    document.getElementById('progressCount').textContent='100%';
+    document.getElementById('stepsDots').innerHTML='';
+    document.getElementById('btnNext').textContent='✓ Wyślij ankietę';
+    document.getElementById('btnNext').onclick=submitForm;
+    document.getElementById('btnPrev').disabled=false;
+  }
+}
+
+function prevStep(){
+  const isSummary=document.getElementById('step-summary').classList.contains('active');
+  if(isSummary){
+    showStep(TOTAL);
+    document.getElementById('btnNext').textContent='Dalej →';
+    document.getElementById('btnNext').onclick=nextStep;
+    updateProgress();buildDots();return;
+  }
+  if(current>1){current--;showStep(current);updateProgress();buildDots();}
+}
+
+/* ── SUBMIT ──
+   KONFIGURACJA: zamień YOUR_FORMSPREE_ID na swój endpoint z formspree.io
+   Przykład: https://formspree.io/f/xpzgkrqo
+*/
+async function submitForm(){
+  const btn=document.getElementById('btnNext');
+  btn.disabled=true;
+  btn.textContent='Wysyłanie…';
+
+  const FORMSPREE_URL='https://formspree.io/f/YOUR_FORMSPREE_ID';
+
+  const payload={
+    _subject:'Nowa ankieta beauty — '+formData.nazwa,
+    salon:formData.nazwa,
+    wlasciciel:formData.wlasciciel,
+    email:formData.email,
+    telefon:formData.tel,
+    adres:formData.adres,
+    profil:formData.profil.join(', '),
+    uslugi_fryzjerskie:formData.fryzjer.join(', '),
+    uslugi_kosmetyczne:formData.kosmet.join(', '),
+    zabiegi_inwazyjne:formData.inwazyjne.join(', '),
+    stan_dokumentacji:formData.procedury,
+    autoklaw:formData.autoklaw,
+    dezyn_narz:formData.dezyn_narz.join(', '),
+    bdo:formData.bdo,
+    kontrola:formData.kontrola,
+    uwagi_z_kontroli:formData.kontrola_uwagi,
+    pytania:formData.pytania,
+    szczegolne:formData.szczegolne
+  };
+
+  try{
+    const res=await fetch(FORMSPREE_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    if(res.ok){
+      showStep('done');
+      document.getElementById('navBar').style.display='none';
+    }else{
+      throw new Error('błąd serwera');
+    }
+  }catch(err){
+    /* fallback — pokazujemy sukces lokalnie jeśli Formspree nie skonfigurowany */
+    if(FORMSPREE_URL.includes('YOUR_FORMSPREE_ID')){
+      showStep('done');
+      document.getElementById('navBar').style.display='none';
+    }else{
+      btn.disabled=false;
+      btn.textContent='✓ Wyślij ankietę';
+      alert('Wystąpił błąd podczas wysyłania. Spróbuj ponownie lub skontaktuj się bezpośrednio.');
+    }
+  }
+}
+
+/* ── INTERACTIONS ── */
+document.addEventListener('click',function(e){
+  const ci=e.target.closest('.check-item');
+  if(ci&&ci.closest('.check-group')){ci.classList.toggle('selected');return;}
+  const ri=e.target.closest('.radio-item');
+  if(ri&&ri.closest('.radio-group')){
+    ri.closest('.radio-group').querySelectorAll('.radio-item').forEach(x=>x.classList.remove('selected'));
+    ri.classList.add('selected');
+  }
+});
+
+/* ── INIT ── */
+buildDots();
+updateProgress();
+</script>
+</body>
+</html>
